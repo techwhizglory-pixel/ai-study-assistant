@@ -43,10 +43,11 @@ const Navbar = () => {
                 {link.label}
               </a>
             ))}
-
+ <Link to="/dashboard">
             <button className="bg-blue-700 px-5 py-3 rounded-xl text-white font-medium">
-              <Link to="/dashboard"> Get Started</Link>
+              Get Started
             </button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}

@@ -1,25 +1,42 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
 import Sidebar from "../layouts/Sidebar";
 import MobileBottomNav from "../layouts/MobileBottomNav";
 import DashboardContent from "../components/DashboardContent";
-
+import { Upload } from "lucide-react";
+import MobileDashNav from "../layouts/MobileDashNav";
+import DashboardNav from "../layouts/DashboardNav";
+import { Link } from "react-router-dom";
 
 const DashboardLayout = () => {
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      
-      {/* Desktop Sidebar */}
-      <div className="hidden md:block">
-        <Sidebar />
-      </div>
+    <div className="min-h-screen bg-gray-100 flex flex-col overflow-x-hidden">
 
-      {/* Main Content */}
-      <div className="flex-1 pb-20 md:pb-0">
-        < DashboardContent/>
-      </div>
+      {/* Header */}
+      <header className="w-full">
+        <div className="md:hidden">
+          <MobileDashNav />
+        </div>
+        <div className="hidden md:flex md:ml-64">
+          <DashboardNav />
+        </div>
+      </header>
 
-      {/* Mobile Bottom Nav */}
+      {/* Body */}
+      <div className="flex flex-1">
+        <div className="hidden md:block">
+          <Sidebar />
+        </div>
+
+        <div className="flex-1 md:ml-64 pb-20 md:pb-0 w-full min-w-0">
+          <DashboardContent />
+        </div>
+      </div>
+ <Link
+        to="/upload">
+      <button className="fixed bottom-24 right-5 bg-blue-700 p-4 rounded-2xl shadow-lg md:hidden z-50">
+        <Upload className="text-white" size={28} />
+      </button>
+</Link>
       <div className="md:hidden">
         <MobileBottomNav />
       </div>
