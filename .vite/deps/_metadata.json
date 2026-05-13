@@ -1,0 +1,88 @@
+{
+  "hash": "7ee32442",
+  "configHash": "4dadd5f2",
+  "lockfileHash": "f615eb1f",
+  "browserHash": "5c0e6579",
+  "optimized": {
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "3f3a231b",
+      "needsInterop": true
+    },
+    "react-icons/bi": {
+      "src": "../../node_modules/react-icons/bi/index.mjs",
+      "file": "react-icons_bi.js",
+      "fileHash": "c9c2bfbb",
+      "needsInterop": false
+    },
+    "react-icons/fa": {
+      "src": "../../node_modules/react-icons/fa/index.mjs",
+      "file": "react-icons_fa.js",
+      "fileHash": "9618ced2",
+      "needsInterop": false
+    },
+    "react-icons/gi": {
+      "src": "../../node_modules/react-icons/gi/index.mjs",
+      "file": "react-icons_gi.js",
+      "fileHash": "41614c4a",
+      "needsInterop": false
+    },
+    "react-icons/io": {
+      "src": "../../node_modules/react-icons/io/index.mjs",
+      "file": "react-icons_io.js",
+      "fileHash": "fc96eec5",
+      "needsInterop": false
+    },
+    "react-icons/io5": {
+      "src": "../../node_modules/react-icons/io5/index.mjs",
+      "file": "react-icons_io5.js",
+      "fileHash": "eef5f420",
+      "needsInterop": false
+    },
+    "react-icons/md": {
+      "src": "../../node_modules/react-icons/md/index.mjs",
+      "file": "react-icons_md.js",
+      "fileHash": "41b5ed62",
+      "needsInterop": false
+    },
+    "react-icons/tfi": {
+      "src": "../../node_modules/react-icons/tfi/index.mjs",
+      "file": "react-icons_tfi.js",
+      "fileHash": "545bfe8f",
+      "needsInterop": false
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.mjs",
+      "file": "react-router-dom.js",
+      "fileHash": "f6e16a64",
+      "needsInterop": false
+    },
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "6de45b32",
+      "needsInterop": true
+    },
+    "react/jsx-dev-runtime": {
+      "src": "../../node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "fa8b8ad2",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "iconBase-CYdjOTrv": {
+      "file": "iconBase-CYdjOTrv.js",
+      "isDynamicEntry": false
+    },
+    "react-BejDdLFV": {
+      "file": "react-BejDdLFV.js",
+      "isDynamicEntry": false
+    },
+    "react-dom-Ds__Jv24": {
+      "file": "react-dom-Ds__Jv24.js",
+      "isDynamicEntry": false
+    }
+  }
+}
