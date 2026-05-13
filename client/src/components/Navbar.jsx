@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { IoMdMenu } from "react-icons/io";
 import { TfiClose } from "react-icons/tfi";
+import { Link } from "react-router-dom";
 
 const navLinks = [
   { href: "#features", label: "Features" },
@@ -14,9 +15,7 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 w-full z-50 bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         <div className="flex justify-between items-center h-16 md:h-20">
-          
           {/* Logo */}
           <div className="flex items-center cursor-pointer">
             <img
@@ -46,7 +45,7 @@ const Navbar = () => {
             ))}
 
             <button className="bg-blue-700 px-5 py-3 rounded-xl text-white font-medium">
-              Get Started
+              <Link to="/dashboard"> Get Started</Link>
             </button>
           </div>
 
@@ -78,7 +77,7 @@ const Navbar = () => {
                 onClick={() => setMobile(false)}
                 className="bg-blue-700 text-white py-3 rounded-xl"
               >
-                Get Started
+                <Link to="/dashboard"> Get Started</Link>
               </button>
             </div>
           </div>
