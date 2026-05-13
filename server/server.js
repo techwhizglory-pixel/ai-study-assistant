@@ -4,6 +4,7 @@ require('dotenv').config()
 const connectDB = require('./config/db')
 const authRoutes = require('./routes/authRoutes')
 const noteRoutes = require('./routes/noteRoutes')
+const aiRoutes = require('./routes/aiRoutes')
 
 const app = express()
 
@@ -14,6 +15,7 @@ app.use(express.json())
 
 app.use('/api/auth', authRoutes)
 app.use('/api/notes', noteRoutes)
+app.use('/api/ai', aiRoutes)
 
 const PORT = process.env.PORT || 5000
 
