@@ -1,0 +1,40 @@
+import React from "react";
+import Sidebar from "../layouts/Sidebar";
+import MobileBottomNav from "../layouts/MobileBottomNav";
+import DashboardContent from "../components/DashboardContent";
+import { Upload } from "lucide-react";
+import MobileDashNav from "../layouts/MobileDashNav";
+import DashboardNav from "../layouts/DashboardNav";
+import UploadContent from "../components/UploadContent";
+import SummaryContent from "../components/SummaryContent";
+
+const ProfilePage = () => {
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col overflow-x-hidden">
+
+      {/* Header */}
+      
+
+      {/* Body */}
+      <div className="flex flex-1">
+        <div className="hidden md:block">
+          <Sidebar />
+        </div>
+
+        <div className="flex-1 md:ml-64 pb-20 md:pb-0 w-full min-w-0">
+          <SummaryContent />
+        </div>
+      </div>
+
+      <button className="fixed bottom-24 right-5 bg-blue-700 p-4 rounded-2xl shadow-lg md:hidden z-50">
+        <Upload className="text-white" size={28} />
+      </button>
+
+      <div className="md:hidden">
+        <MobileBottomNav />
+      </div>
+    </div>
+  );
+};
+
+export default ProfilePage;

@@ -5,6 +5,8 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardLayout from "./pages/Dashboard";
 import UploadPage from "./pages/UploadPage";
+import SummaryPage from "./pages/SummaryPage";
+import ProfilePage from "./pages/ProfilePage";
 
 const App = () => {
   return (
@@ -16,7 +18,12 @@ const App = () => {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/dashboard" element={<DashboardLayout />} />
           <Route path="/upload" element={<UploadPage />} />
+          <Route path="/summaries" element={<SummaryPage />} />
+  <Route path="/profile" element={<ProfilePage />} />
+          
         </Routes>
+
+
       </BrowserRouter>
     </>
   );

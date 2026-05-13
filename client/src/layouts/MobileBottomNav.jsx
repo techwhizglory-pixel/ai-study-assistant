@@ -49,7 +49,7 @@ const MobileBottomNav = () => {
       </Link>
 
       <Link
-        to="/profile"
+        to="/summaries"
         className="flex flex-col items-center text-sm  hover:translate-y-1 hover:animate-bounce transition-all  "
       >
         <Notebook size={20}  />
