@@ -25,4 +25,30 @@ const askQuestion = async (text, question) => {
     return response.choices[0].message.content
 }
 
-module.exports = { summarizeText, askQuestion }
+const generateQuiz = async (text, count, difficulty) => {
+    const response = await groq.chat.completions.create({
+        model: 'llama-3.1-8b-instant',
+        messages: [
+            { 
+                role: 'system', 
+                content: `You are a quiz generator. Return JSON only — no markdown, no explanation. 
+Return an array of exactly ${count} questions in this format:
+[
+  {
+    "question": "question here",
+    "options": ["A. option1", "B. option2", "C. option3", "D. option4"],
+    "answer": "A"
+  }
+]`
+            },
+            { 
+                role: 'user', 
+                content: `Generate ${count} ${difficulty} difficulty multiple choice questions from these notes: ${text}` 
+            }
+        ]
+    })
+    const clean = response.choices[0].message.content.replace(/```json|```/g, '').trim()
+    return JSON.parse(clean)
+}
+
+module.exports = { summarizeText, askQuestion, generateQuiz }
