@@ -5,6 +5,7 @@ const connectDB = require('./config/db')
 const authRoutes = require('./routes/authRoutes')
 const noteRoutes = require('./routes/noteRoutes')
 const aiRoutes = require('./routes/aiRoutes')
+const quizRoutes = require('./routes/quizRoutes')
 
 const app = express()
 
@@ -16,6 +17,7 @@ app.use(express.json())
 app.use('/api/auth', authRoutes)
 app.use('/api/notes', noteRoutes)
 app.use('/api/ai', aiRoutes)
+app.use('/api/quiz', quizRoutes)
 
 const PORT = process.env.PORT || 5000
 
