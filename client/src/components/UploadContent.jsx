@@ -80,7 +80,7 @@ const UploadNotesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className=" mt-30 md:mt-10  min-h-screen bg-gray-100">
       
       
 

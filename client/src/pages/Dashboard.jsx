@@ -31,12 +31,14 @@ const DashboardLayout = () => {
           <DashboardContent />
         </div>
       </div>
- <Link
-        to="/upload">
+ 
       <button className="fixed bottom-24 right-5 bg-blue-700 p-4 rounded-2xl shadow-lg md:hidden z-50">
+        <Link
+        to="/upload">
         <Upload className="text-white" size={28} />
+        </Link>
       </button>
-</Link>
+
       <div className="md:hidden">
         <MobileBottomNav />
       </div>

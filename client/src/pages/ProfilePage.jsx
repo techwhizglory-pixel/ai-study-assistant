@@ -22,7 +22,7 @@ const ProfilePage = () => {
         </div>
 
         <div className="flex-1 md:ml-64 pb-20 md:pb-0 w-full min-w-0">
-          <SummaryContent />
+          
         </div>
       </div>
 

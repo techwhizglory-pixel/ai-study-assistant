@@ -2,7 +2,7 @@ import React from "react";
 import Sidebar from "../layouts/Sidebar";
 import MobileBottomNav from "../layouts/MobileBottomNav";
 import DashboardContent from "../components/DashboardContent";
-import { Upload } from "lucide-react";
+import { MoreVertical, Upload, User } from "lucide-react";
 import MobileDashNav from "../layouts/MobileDashNav";
 import DashboardNav from "../layouts/DashboardNav";
 import UploadContent from "../components/UploadContent";
@@ -11,14 +11,9 @@ import SummaryContent from "../components/SummaryContent";
 const SummaryPage = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col overflow-x-hidden">
-
-      {/* Header */}
-      <header className="w-full">
-        <div className="md:hidden">
-          <MobileDashNav />
-        </div>
-        <div className="hidden md:flex md:ml-64">
-          <DashboardNav />
+      <header>
+        <div className="flex md:hidden  items-center justify-between px-5 pt-6 pb-4 w-full">
+          <h1 className="text-2xl font-bold ">AI Study Assistant</h1>
         </div>
       </header>
 

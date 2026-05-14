@@ -26,6 +26,41 @@ export const getCurrentUser = (token) => {
   });
 };
 
+// ---------------- AI FEATURES ----------------
+
+// Generate summary
+export const generateSummary = (noteId, token) => {
+  return API.post(
+    "/ai/summarize",
+    { noteId },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+// Ask AI questions
+export const askAIQuestion = (
+  noteId,
+  question,
+  token
+) => {
+  return API.post(
+    "/ai/ask",
+    {
+      noteId,
+      question,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
 
 
 // ---------------- NOTES ----------------

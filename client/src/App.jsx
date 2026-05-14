@@ -7,6 +7,8 @@ import DashboardLayout from "./pages/Dashboard";
 import UploadPage from "./pages/UploadPage";
 import SummaryPage from "./pages/SummaryPage";
 import ProfilePage from "./pages/ProfilePage";
+import MyNotesPage from "./pages/MyNotesPage";
+import AiChatPage from "./pages/AiChartPage";
 
 const App = () => {
   return (
@@ -20,6 +22,10 @@ const App = () => {
           <Route path="/upload" element={<UploadPage />} />
           <Route path="/summaries" element={<SummaryPage />} />
   <Route path="/profile" element={<ProfilePage />} />
+  <Route path="/notes" element={<MyNotesPage />} />
+  chat
+
+    <Route path="/chat" element={<AiChatPage />} />
           
         </Routes>
 
