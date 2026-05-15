@@ -17,7 +17,7 @@ const MobileDashNav = () => {
               <User size={24} className="" />
             </Link>
 
-           
+
           </div>
         </div>
 
