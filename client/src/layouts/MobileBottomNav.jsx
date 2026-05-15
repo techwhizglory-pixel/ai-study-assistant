@@ -12,36 +12,11 @@ import {
 import { MdQuiz } from "react-icons/md";
 
 const navLinks = [
-  {
-    name: "Dashboard",
-    path: "/dashboard",
-    icon: <LayoutDashboard size={18} />,
-  },
- {
-     name: "Quiz",
-     path: "/quizzes/1",
-     icon: <MdQuiz size={18} />,
-   },
-  {
-    name: "Notes",
-    path: "/notes",
-    icon: <FileText size={18} />,
-  },
-  {
-    name: "Summary",
-    path: "/summary/1",
-    icon: <Sparkles size={18} />,
-  },
-  {
-    name: "AI Chat",
-    path: "/chat/1",
-    icon: <MessageSquare size={18} />,
-  },
-  {
-    name: "Profile",
-    path: "/profile",
-    icon: <User size={18} />,
-  },
+  { name: "Dashboard", path: "/dashboard", icon: <LayoutDashboard size={18} /> },
+  { name: "My Notes", path: "/notes", icon: <FileText size={18} /> },
+  { name: "Upload", path: "/upload", icon: <Upload size={18} /> },
+  { name: "AI Chat", path: "/chat", icon: <MessageSquare size={18} /> },
+  { name: "Profile", path: "/profile", icon: <User size={18} /> },
 ];
 
 const MobileBottomNav = () => {
