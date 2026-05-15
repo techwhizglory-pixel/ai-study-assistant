@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { askAIQuestion } from "../services/api";
+import { askAI } from "../services/api";
 
 import { Send, Plus } from "lucide-react";
 

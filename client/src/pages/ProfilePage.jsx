@@ -7,13 +7,19 @@ import MobileDashNav from "../layouts/MobileDashNav";
 import DashboardNav from "../layouts/DashboardNav";
 import UploadContent from "../components/UploadContent";
 import SummaryContent from "../components/SummaryContent";
+import ProfileContent from "../components/ProfileContent";
 
 const ProfilePage = () => {
+
+  
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col overflow-x-hidden">
-
       {/* Header */}
-      
+      <header className="w-full">
+        <div className="md:hidden">
+          <MobileDashNav />
+        </div>
+      </header>
 
       {/* Body */}
       <div className="flex flex-1">
@@ -21,14 +27,12 @@ const ProfilePage = () => {
           <Sidebar />
         </div>
 
-        <div className="flex-1 md:ml-64 pb-20 md:pb-0 w-full min-w-0">
-          
+        <div className="flex-1  pb-20 md:pb-0 w-full min-w-0">
+          <ProfileContent />
         </div>
       </div>
 
-      <button className="fixed bottom-24 right-5 bg-blue-700 p-4 rounded-2xl shadow-lg md:hidden z-50">
-        <Upload className="text-white" size={28} />
-      </button>
+      
 
       <div className="md:hidden">
         <MobileBottomNav />

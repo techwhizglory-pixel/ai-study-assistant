@@ -10,7 +10,6 @@ import UploadContent from "../components/UploadContent";
 const UploadPage = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col overflow-x-hidden">
-
       {/* Header */}
       <header className="w-full">
         <div className="md:hidden">
@@ -31,10 +30,6 @@ const UploadPage = () => {
           <UploadContent />
         </div>
       </div>
-
-      <button className="fixed bottom-24 right-5 bg-blue-700 p-4 rounded-2xl shadow-lg md:hidden z-50">
-        <Upload className="text-white" size={28} />
-      </button>
 
       <div className="md:hidden">
         <MobileBottomNav />

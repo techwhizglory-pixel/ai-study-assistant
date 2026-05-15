@@ -7,6 +7,7 @@ import MobileDashNav from "../layouts/MobileDashNav";
 import DashboardNav from "../layouts/DashboardNav";
 import UploadContent from "../components/UploadContent";
 import SummaryContent from "../components/SummaryContent";
+import { Link } from "react-router-dom";
 
 const SummaryPage = () => {
   return (
@@ -28,8 +29,11 @@ const SummaryPage = () => {
         </div>
       </div>
 
-      <button className="fixed bottom-24 right-5 bg-blue-700 p-4 rounded-2xl shadow-lg md:hidden z-50">
+     <button className="fixed bottom-24 right-5 bg-blue-700 p-4 rounded-2xl shadow-lg md:hidden z-50">
+        <Link
+        to="/upload">
         <Upload className="text-white" size={28} />
+        </Link>
       </button>
 
       <div className="md:hidden">

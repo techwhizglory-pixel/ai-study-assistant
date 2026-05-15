@@ -1,191 +1,167 @@
-import React, { useState, useEffect } from "react";
-import { FileText, Trash2, Loader2, MoreVertical, Sparkles, } from "lucide-react";
-import Sidebar from "../layouts/Sidebar";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import MobileBottomNav from "../layouts/MobileBottomNav";
+import React, { useEffect, useState } from "react";
 
-let API = import.meta.env.VITE_API_URL;
+import { useNavigate } from "react-router-dom";
+import {
+  FileText,
+  Trash2,
+  MessageSquare,
+  Brain,
+  
+} from "lucide-react";
+import { getNotes, deleteNote } from "../services/api";
+import MobileBottomNav from "../layouts/MobileBottomNav";
+import Sidebar from "../layouts/Sidebar";
 
 const MyNotesPage = () => {
-  let [notes, setNotes] = useState([]);
-  let [loading, setLoading] = useState(true);
-  let [error, setError] = useState("");
-  let [openMenu, setOpenMenu] = useState(null);
-  let navigate = useNavigate();
+  const navigate = useNavigate();
 
-  useEffect(function () {
+  const [notes, setNotes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
     fetchNotes();
   }, []);
 
-  async function fetchNotes() {
+  const fetchNotes = async () => {
     try {
-      setLoading(true);
-      let token = localStorage.getItem("token");
-      let res = await axios.get(`${API}/notes`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await getNotes();
       setNotes(res.data.notes);
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to load notes.");
+    } catch (error) {
+      console.log(error);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  async function handleDelete(noteId) {
+  const handleDelete = async (id) => {
     try {
-      let token = localStorage.getItem("token");
-      await axios.delete(`${API}/notes/${noteId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setNotes(notes.filter(function (n) { return n._id !== noteId; }));
-      setOpenMenu(null);
-    } catch (err) {
-      alert("Failed to delete note.");
+      await deleteNote(id);
+
+      setNotes(notes.filter((note) => note._id !== id));
+    } catch (error) {
+      console.log(error);
     }
-  }
+  };
 
-  function handleSummarize(noteId) {
-    navigate("/summaries", { state: { noteId } });
-  }
-
-  function handleAskAI(noteId) {
-    navigate("/chat", { state: { noteId } });
-  }
-
-  let colors = ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500", "bg-purple-500", "bg-pink-500"];
-
-  function getColor(index) {
-    return colors[index % colors.length];
+  if (loading) {
+    return (
+      <div className="flex min-h-screen bg-gray-100">
+        <Sidebar />
+        <div className="flex-1 md:ml-64 p-8">
+          Loading notes...
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="p-4 md:p-6 space-y-6w-4xl">
-        <div className="hidden md:block">
-          <Sidebar />
-        </div>
+    <div className="flex min-h-screen bg-gray-100">
+      <Sidebar/>
 
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl md:text-2xl font-bold text-gray-800">My Notes</h1>
-          <p className="text-sm text-gray-400 mt-1">{notes.length} note{notes.length !== 1 ? "s" : ""} uploaded</p>
-        </div>
-        <button
-          onClick={function () { navigate("/upload"); }}
-          className="bg-blue-600 text-white text-sm px-4 py-2.5 rounded-lg hover:bg-blue-700 transition"
-        >
-          + Upload Note
-        </button>
+      <div className="md:hidden">
+        <MobileBottomNav />
       </div>
-
-      
-
-      {/* Error */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3">
-          {error}
+      <div className="flex-1 md:ml-64 p-4 md:p-8">
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold">
+            My Notes
+          </h1>
+          <p className="text-gray-500">
+            Manage all your uploaded study materials
+          </p>
         </div>
-      )}
 
-      {/* Loading */}
-      {loading && (
-        <div className="bg-white rounded-xl p-10 shadow-sm flex flex-col items-center gap-3 text-gray-400">
-          <Loader2 size={28} className="animate-spin text-blue-600" />
-          <p className="text-sm">Loading notes...</p>
-        </div>
-      )}
+        {notes.length === 0 ? (
+          <div className="bg-white rounded-xl p-8 shadow text-center">
+            <FileText className="mx-auto mb-3 text-gray-400" size={40} />
+            <h2 className="text-xl font-semibold">
+              No Notes Uploaded Yet
+            </h2>
+            <p className="text-gray-500 mt-2">
+              Upload your first note to start learning smarter
+            </p>
 
-      {/* Empty */}
-      {!loading && notes.length === 0 && !error && (
-        <div className="bg-white rounded-xl p-10 shadow-sm flex flex-col items-center gap-3 text-gray-400">
-          <FileText size={36} className="text-gray-300" />
-          <p className="text-sm">No notes uploaded yet.</p>
-          <button
-            onClick={function () { navigate("/upload"); }}
-            className="mt-2 bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-          >
-            Upload your first note
-          </button>
-        </div>
-      )}
-
-      {/* Notes List */}
-      {!loading && notes.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm divide-y divide-gray-100">
-          {notes.map(function (note, index) {
-            return (
-              <div key={note._id} className="flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition relative">
-                
-                {/* Left */}
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className={`w-9 h-9 flex-shrink-0 rounded-lg ${getColor(index)} flex items-center justify-center`}>
-                    <FileText size={16} className="text-white" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-800 truncate">{note.title}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">
-                      {note.description || "No description"} · {new Date(note.createdAt).toLocaleDateString()}
-                    </p>
-                    {note.tags?.length > 0 && (
-                      <div className="flex gap-1 mt-1 flex-wrap">
-                        {note.tags.map(function (tag) {
-                          return (
-                            <span key={tag} className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
-                              {tag}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
+            <button
+              onClick={() => navigate("/upload")}
+              className="mt-4 bg-blue-600 text-white px-6 py-3 rounded-lg"
+            >
+              Upload Notes
+            </button>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {notes.map((note) => (
+              <div
+                key={note._id}
+                className="bg-white rounded-xl shadow p-5"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <FileText className="text-blue-600" />
+                  <h2 className="font-semibold text-lg">
+                    {note.title}
+                  </h2>
                 </div>
 
-                {/* Right - Menu */}
-                <div className="relative flex-shrink-0 ml-4">
+                <p className="text-gray-500 text-sm mb-3">
+                  {note.description || "No description available"}
+                </p>
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {note.tags?.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Actions */}
+                <div className="grid grid-cols-2 gap-3">
                   <button
-                    onClick={function () { setOpenMenu(openMenu === note._id ? null : note._id); }}
-                    className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400"
+                    onClick={() =>
+                      navigate(`/summary/${note._id}`)
+                    }
+                    className="bg-purple-600 text-white py-2 rounded-lg"
                   >
-                    <MoreVertical size={16} />
+                    Summary
                   </button>
 
-                  {openMenu === note._id && (
-                    <div className="absolute right-0 top-8 bg-white border border-gray-100 rounded-xl shadow-lg z-10 w-44 py-1">
-                      <button
-                        onClick={function () { handleSummarize(note._id); }}
-                        className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
-                      >
-                        <Sparkles size={15} className="text-purple-500" />
-                        Summarize
-                      </button>
-                      <button
-                        onClick={function () { handleAskAI(note._id); }}
-                        className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
-                      >
-                        <FileText size={15} className="text-blue-500" />
-                        Ask AI
-                      </button>
-                      <hr className="my-1 border-gray-100" />
-                      <button
-                        onClick={function () { handleDelete(note._id); }}
-                        className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-500 hover:bg-red-50"
-                      >
-                        <Trash2 size={15} />
-                        Delete
-                      </button>
-                    </div>
-                  )}
+                  <button
+                    onClick={() =>
+                      navigate(`/chat/${note._id}`)
+                    }
+                    className="bg-green-600 text-white py-2 rounded-lg flex items-center justify-center gap-2"
+                  >
+                    <MessageSquare size={16} />
+                    Chat
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      navigate(`/quiz/${note._id}`)
+                    }
+                    className="bg-orange-600 text-white py-2 rounded-lg flex items-center justify-center gap-2"
+                  >
+                    <Brain size={16} />
+                    Quiz
+                  </button>
+
+                  <button
+                    onClick={() => handleDelete(note._id)}
+                    className="bg-red-600 text-white py-2 rounded-lg flex items-center justify-center gap-2"
+                  >
+                    <Trash2 size={16} />
+                    Delete
+                  </button>
                 </div>
               </div>
-            );
-          })}
-        </div>
-      )}
- 
-       <div className="md:hidden">
-        <MobileBottomNav />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

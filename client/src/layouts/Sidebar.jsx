@@ -1,61 +1,103 @@
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, FileText, Upload, MessageSquare, User, Notebook, LogOut } from "lucide-react";
-import { FaQuestion } from "react-icons/fa";
+import React from "react";
+import { NavLink } from "react-router-dom";
+import {
+  LayoutDashboard,
+  FileText,
+  Upload,
+  Sparkles,
+  MessageSquare,
+  User,
+  LogOut,
+} from "lucide-react";
+import { MdQuiz } from "react-icons/md";
 
-let navItems = [
-  { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { to: "/notes", icon: FileText, label: "My Notes" },
-  { to: "/upload", icon: Upload, label: "Upload Notes" },
-  { to: "/summaries", icon: Notebook, label: "Summaries" },
-  { to: "/quizzes", icon: FaQuestion, label: "Quizzes" },
-  { to: "/chat", icon: MessageSquare, label: "AI Chat" },
-  { to: "/profile", icon: User, label: "Profile" },
+const navLinks = [
+  {
+    name: "Dashboard",
+    path: "/dashboard",
+    icon: <LayoutDashboard size={18} />,
+  },
+  {
+    name: "Upload",
+    path: "/upload",
+    icon: <Upload size={18} />,
+  },
+
+   {
+     name: "Quiz",
+     path: "/quizzes/1",
+     icon: <MdQuiz size={18} />,
+   },
+  {
+    name: "Notes",
+    path: "/notes",
+    icon: <FileText size={18} />,
+  },
+  {
+    name: "Summary",
+    path: "/summary/1",
+    icon: <Sparkles size={18} />,
+  },
+  {
+    name: "AI Chat",
+    path: "/chat/1",
+    icon: <MessageSquare size={18} />,
+  },
+  {
+    name: "Profile",
+    path: "/profile",
+    icon: <User size={18} />,
+  },
 ];
 
 const Sidebar = () => {
-  let location = useLocation();
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
 
   return (
-    <div className="w-64 h-screen bg-[#0f172a] text-white flex flex-col fixed top-0 left-0">
-      
-      {/* Logo */}
-      <div className="flex items-center gap-3 px-6 py-6 border-b border-white/10">
-        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-          <LayoutDashboard size={16} />
+    <>
+      {/* Desktop Sidebar */}
+      <div className="hidden md:flex flex-col justify-between w-64 h-screen bg-[#0B0B2D] text-white fixed left-0 top-0 p-6">
+        
+        {/* Logo */}
+        <div>
+          <h1 className="text-2xl font-bold mb-10">
+            AI Study
+          </h1>
+
+          {/* Navigation Links */}
+          <div className="space-y-3">
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.name}
+                to={link.path}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-4 py-3 rounded-xl transition ${
+                    isActive
+                      ? "bg-purple-600"
+                      : "hover:bg-white/10"
+                  }`
+                }
+              >
+                {link.icon}
+                <span>{link.name}</span>
+              </NavLink>
+            ))}
+          </div>
         </div>
-        <span className="text-lg font-bold">AI Study</span>
-      </div>
 
-      {/* Nav Links */}
-      <nav className="flex-1 px-4 py-6 flex flex-col gap-1">
-        {navItems.map(function({ to, icon: Icon, label }) {
-          let isActive = location.pathname === to;
-          return (
-            <Link
-              key={to}
-              to={to}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all
-                ${isActive
-                  ? "bg-indigo-800 text-white font-medium"
-                  : "text-gray-400 hover:bg-white/10 hover:text-white"
-                }`}
-            >
-              <Icon size={18} />
-              <span>{label}</span>
-            </Link>
-          );
-        })}
-      </nav>
-
-      {/* Logout */}
-      <div className="px-4 py-6 border-t border-white/10">
-        <button className="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-gray-400 hover:bg-white/10 hover:text-white transition-all">
+        {/* Logout */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 text-red-400 hover:text-red-500"
+        >
           <LogOut size={18} />
-          <span>Logout</span>
+          Logout
         </button>
       </div>
-    </div>
+    </>
   );
 };
 
