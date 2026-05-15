@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 // attach token automatically
@@ -16,29 +16,41 @@ API.interceptors.request.use((req) => {
 });
 
 
-// AUTH
+// ================= AUTH =================
 export const loginUser = (data) => API.post("/auth/login", data);
 export const registerUser = (data) => API.post("/auth/register", data);
 
 
-// NOTES
-export const uploadNote = (data) => API.post("/notes/upload", data);
+// ================= NOTES =================
+export const uploadNote = (formData) =>
+  API.post("/notes/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
 export const getNotes = () => API.get("/notes");
+
+export const getNoteById = (id) => API.get(`/notes/${id}`);
+
 export const deleteNote = (id) =>
   API.delete(`/notes/${id}`);
 
 
-// SUMMARY
+// ================= SUMMARY =================
 export const generateSummary = (noteId) =>
   API.post("/ai/summarize", { noteId });
 
 
-// AI CHAT
-export const askAI = (data) =>
-  API.post("/ai/ask", data);
+// ================= AI CHAT =================
+export const askAI = (noteId, question) =>
+  API.post("/ai/ask", {
+    noteId,
+    question,
+  });
 
 
-// QUIZ
+// ================= QUIZ =================
 export const generateQuiz = (data) =>
   API.post("/quiz/generate", data);
 
