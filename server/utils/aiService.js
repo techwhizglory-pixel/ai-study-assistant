@@ -50,5 +50,31 @@ Return an array of exactly ${count} questions in this format:
     const clean = response.choices[0].message.content.replace(/```json|```/g, '').trim()
     return JSON.parse(clean)
 }
+const generateFlashcards = async (text) => {
+    const response = await groq.chat.completions.create({
+        model: 'llama-3.1-8b-instant',
+        messages: [
+            {
+                role: 'system',
+                content: `You are a flashcard generator. Create clear study flashcards from the notes.
+Return JSON array only, no markdown:
+[
+  {
+    "front": "Question or concept here",
+    "back": "Answer or explanation here"
+  }
+]
+Generate between 8-12 flashcards covering the most important concepts.`
+            },
+            {
+                role: 'user',
+                content: `Generate flashcards from these notes: ${text}`
+            }
+        ],
+        max_tokens: 2000
+    })
+    const clean = response.choices[0].message.content.replace(/```json|```/g, '').trim()
+    return JSON.parse(clean)
+}
 
-module.exports = { summarizeText, askQuestion, generateQuiz }
+module.exports = { summarizeText, askQuestion, generateQuiz, generateFlashcards }

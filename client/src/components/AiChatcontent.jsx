@@ -1,190 +1,149 @@
-import React, { useState } from "react";
-import { askAI } from "../services/api";
-
+import React, { useState, useEffect } from "react";
+import { askAI, getNotes } from "../services/api";
 import { Send, Plus } from "lucide-react";
+import { useParams } from "react-router-dom";
 
 const AIChatPage = () => {
-  const [question, setQuestion] = useState("");
-  const [loading, setLoading] = useState(false);
+  let { noteId: paramNoteId } = useParams();
 
-  const [selectedNote, setSelectedNote] = useState("Data Structures and Algorithms.pdf");
-
-  const [messages, setMessages] = useState([
+  let [question, setQuestion] = useState("");
+  let [loading, setLoading] = useState(false);
+  let [notes, setNotes] = useState([]);
+  let [selectedNote, setSelectedNote] = useState(paramNoteId || "");
+  let [messages, setMessages] = useState([
     {
       type: "ai",
       text: "Ask me anything about your notes and I'll help you understand.",
-      time: "10:20 AM",
+      time: "Now",
     },
   ]);
 
-  const token = localStorage.getItem("token");
+  useEffect(function () {
+    async function fetchNotes() {
+      try {
+        let res = await getNotes();
+        setNotes(res.data.notes);
+        // if no noteId from params, default to first note
+        if (!paramNoteId && res.data.notes.length > 0) {
+          setSelectedNote(res.data.notes[0]._id);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchNotes();
+  }, []);
 
-  const noteId = "demo-note-id";
-   // replace later with actual note id
-
-  const handleSendMessage = async () => {
+  async function handleSendMessage() {
     if (!question.trim()) return;
+    if (!selectedNote) return alert("Please select a note first.");
 
-    const userMessage = {
-      type: "user",
-      text: question,
-      time: "Now",
-    };
+    let userMessage = { type: "user", text: question, time: "Now" };
+    setMessages(function (prev) { return [...prev, userMessage]; });
 
-    setMessages((prev) => [...prev, userMessage]);
-
-    const currentQuestion = question;
+    let currentQuestion = question;
     setQuestion("");
 
     try {
       setLoading(true);
-
-      const res = await askAIQuestion(
-        noteId,
-        currentQuestion,
-        token
-      );
-
-      const aiMessage = {
-        type: "ai",
-        text: res.data.answer,
-        time: "Now",
-      };
-
-      setMessages((prev) => [...prev, aiMessage]);
+      let res = await askAI(selectedNote, currentQuestion);
+      setMessages(function (prev) {
+        return [...prev, { type: "ai", text: res.data.answer, time: "Now" }];
+      });
     } catch (error) {
-      console.log(error);
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          type: "ai",
-          text: "Something went wrong. Try again.",
-          time: "Now",
-        },
-      ]);
+      setMessages(function (prev) {
+        return [...prev, { type: "ai", text: "Something went wrong. Try again.", time: "Now" }];
+      });
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const handleNewChat = () => {
-    setMessages([
-      {
-        type: "ai",
-        text: "New chat started. Ask anything about your notes.",
-        time: "Now",
-      },
-    ]);
-  };
+  function handleNewChat() {
+    setMessages([{ type: "ai", text: "New chat started. Ask anything about your notes.", time: "Now" }]);
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 p-4 md:p-6">
+
       {/* Header */}
-     
-
-      <div className="p-4 md:p-6">
-        
-        {/* Top Section */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-          <div>
-            <h1 className="text-2xl font-bold">
-              AI Study Assistant
-            </h1>
-            <p className="text-gray-500 text-sm">
-              Ask me anything about your notes and I’ll help you understand.
-            </p>
-          </div>
-
-          <button
-            onClick={handleNewChat}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg"
-          >
-            <Plus size={18} />
-            New Chat
-          </button>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">AI Study Assistant</h1>
+          <p className="text-gray-500 text-sm">Ask questions about your notes</p>
         </div>
+        <button
+          onClick={handleNewChat}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg"
+        >
+          <Plus size={18} />
+          New Chat
+        </button>
+      </div>
 
-        {/* Note Selector */}
-        <div className="bg-white rounded-xl p-4 mb-6 shadow-sm">
-          <label className="text-sm text-gray-500 block mb-2">
-            Select a note
-          </label>
+      {/* Note Selector */}
+      <div className="bg-white rounded-xl p-4 mb-6 shadow-sm">
+        <label className="text-sm text-gray-500 block mb-2">Select a note</label>
+        <select
+          value={selectedNote}
+          onChange={function (e) { setSelectedNote(e.target.value); }}
+          className="w-full border rounded-lg p-3 outline-none"
+        >
+          <option value="">-- Select a note --</option>
+          {notes.map(function (note) {
+            return (
+              <option key={note._id} value={note._id}>
+                {note.title}
+              </option>
+            );
+          })}
+        </select>
+      </div>
 
-          <select
-            value={selectedNote}
-            onChange={(e) =>
-              setSelectedNote(e.target.value)
-            }
-            className="w-full border rounded-lg p-3 outline-none"
-          >
-            <option>
-              Data Structures and Algorithms.pdf
-            </option>
-            <option>
-              Physics Notes.pdf
-            </option>
-            <option>
-              Machine Learning.pdf
-            </option>
-          </select>
-        </div>
-
-        {/* Chat Area */}
-        <div className="bg-white rounded-2xl shadow-sm h-[500px] flex flex-col">
-          
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-4">
-            {messages.map((msg, index) => (
+      {/* Chat Box */}
+      <div className="bg-white rounded-2xl shadow-sm h-[500px] flex flex-col">
+        <div className="flex-1 overflow-y-auto p-5 space-y-4">
+          {messages.map(function (msg, index) {
+            return (
               <div
                 key={index}
-                className={`flex ${
-                  msg.type === "user"
-                    ? "justify-end"
-                    : "justify-start"
-                }`}
+                className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
                   className={`max-w-[70%] p-4 rounded-2xl ${
-                    msg.type === "user"
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 text-black"
+                    msg.type === "user" ? "bg-blue-600 text-white" : "bg-gray-100 text-black"
                   }`}
                 >
                   <p>{msg.text}</p>
-                  <span className="text-xs opacity-70 block mt-2">
-                    {msg.time}
-                  </span>
+                  <span className="text-xs opacity-70 block mt-2">{msg.time}</span>
                 </div>
               </div>
-            ))}
+            );
+          })}
 
-            {loading && (
-              <div className="bg-gray-100 w-fit p-3 rounded-xl">
-                AI is typing...
-              </div>
-            )}
-          </div>
+          {loading && (
+            <div className="bg-gray-100 w-fit p-3 rounded-xl text-sm text-gray-500">
+              AI is typing...
+            </div>
+          )}
+        </div>
 
-          {/* Input */}
-          <div className="  border-t p-4 flex items-center gap-3">
-            <input
-              type="text"
-              value={question}
-              onChange={(e) =>
-                setQuestion(e.target.value)
-              }
-              placeholder="Type your question..."
-              className="flex-1 border rounded-lg p-3 outline-none"
-            />
-
-            <button
-              onClick={handleSendMessage}
-              className="bg-purple-600 text-white p-3 rounded-lg"
-            >
-              <Send size={18} />
-            </button>
-          </div>
+        {/* Input */}
+        <div className="border-t p-4 flex items-center gap-3">
+          <input
+            type="text"
+            value={question}
+            onChange={function (e) { setQuestion(e.target.value); }}
+            onKeyDown={function (e) { if (e.key === "Enter") handleSendMessage(); }}
+            placeholder="Type your question..."
+            className="flex-1 border rounded-lg p-3 outline-none"
+          />
+          <button
+            onClick={handleSendMessage}
+            className="bg-purple-600 text-white p-3 rounded-lg"
+          >
+            <Send size={18} />
+          </button>
         </div>
       </div>
     </div>

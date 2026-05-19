@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "../layouts/AuthLayout";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { loginUser } from "../services/api";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const LoginPage = () => {
     password: "",
   });
 
+  // Handle input changes
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -22,7 +24,7 @@ const LoginPage = () => {
     });
   };
 
-  
+  // Handle login submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -37,12 +39,20 @@ const LoginPage = () => {
     try {
       const res = await loginUser(formData);
 
+      // Save token + user
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem(
+        "user",
+        JSON.stringify(res.data.user)
+      );
 
+      // Redirect to dashboard
       navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed. Try again.");
+      setError(
+        err.response?.data?.message ||
+          "Login failed. Try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -57,48 +67,79 @@ const LoginPage = () => {
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg"
       >
-        <h2 className="text-3xl font-bold mb-6">Login</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center">
+          Login
+        </h2>
 
-        {error && <p className="text-red-500 mb-4 text-sm">{error}</p>}
+        {/* Error Message */}
+        {error && (
+          <p className="text-red-500 mb-4 text-sm text-center">
+            {error}
+          </p>
+        )}
 
-        <div className="mb-3">
-          <label className="text-blue-700 ">Email</label>
+        {/* Email */}
+        <div className="mb-4">
+          <label className="text-blue-700 font-medium block mb-2">
+            Email
+          </label>
 
           <input
             type="email"
             name="email"
-            placeholder="Email"
+            placeholder="Enter your email"
+            value={formData.email}
             onChange={handleChange}
-            className="w-full p-3 border rounded-lg mb-4"
+            className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
+        {/* Password */}
         <div className="relative mb-6">
-            <label className="text-blue-700 ">Password</label>
+          <label className="text-blue-700 font-medium block mb-2">
+            Password
+          </label>
+
           <input
             type={showPassword ? "text" : "password"}
             name="password"
-            placeholder="Password"
+            placeholder="Enter your password"
+            value={formData.password}
             onChange={handleChange}
-            className="w-full p-3 border rounded-lg"
+            className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
           />
 
           <button
             type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-10"
+            onClick={() =>
+              setShowPassword(!showPassword)
+            }
+            className="absolute right-4 top-11 text-gray-500"
           >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
+            {showPassword ? (
+              <FaEyeSlash />
+            ) : (
+              <FaEye />
+            )}
           </button>
         </div>
 
-        <button className="w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 transition">
+        {/* Login Button */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 transition"
+        >
           {loading ? "Logging in..." : "Login"}
         </button>
 
+        {/* Register Link */}
         <p className="mt-6 text-center text-sm">
           Don't have an account?{" "}
-          <Link to="/register" className="text-blue-700 font-medium">
+          <Link
+            to="/register"
+            className="text-blue-700 font-medium"
+          >
             Register
           </Link>
         </p>

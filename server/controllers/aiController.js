@@ -1,4 +1,5 @@
 const Note = require('../models/Note')
+const Summary = require('../models/Summary')
 const { summarizeText, askQuestion } = require('../utils/aiService')
 
 const summarize = async (req, res) => {
@@ -18,9 +19,15 @@ const summarize = async (req, res) => {
         return res.status(401).json({ success: false, message: 'Not authorized' })
     }
 
-    const summary = await summarizeText(note.extractedText)
+    const summaryData = await summarizeText(note.extractedText)
 
-    res.status(200).json({ success: true, summary, noteTitle: note.title })
+    const summary = await Summary.create({
+        userId: req.user._id,
+        noteId,
+        summary: summaryData
+    })
+
+    res.status(200).json({ success: true, summary: summary.summary, noteTitle: note.title, summaryId: summary._id })
 }
 
 const askAI = async (req, res) => {
@@ -44,5 +51,11 @@ const askAI = async (req, res) => {
 
     res.status(200).json({ success: true, answer, noteTitle: note.title })
 }
+const getSummaries = async (req, res) => {
+    const summaries = await Summary.find({ userId: req.user._id })
+        .populate('noteId', 'title')
+        .sort({ createdAt: -1 })
 
-module.exports = { summarize, askAI }
+    res.status(200).json({ success: true, count: summaries.length, summaries })
+}
+module.exports = { summarize, askAI, getSummaries }

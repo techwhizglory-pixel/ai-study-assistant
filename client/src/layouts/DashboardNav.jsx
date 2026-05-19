@@ -4,10 +4,12 @@ import { Search, Bell } from "lucide-react";
 const DashboardNav = () => {
   return (
     <header className=" absolute right-0 w-xl  px-6 py-3 flex items-center justify-between">
-      
       {/* Search Bar */}
       <div className="relative w-full sm:max-w-full md:max-w-sm">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+        <Search
+          size={16}
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+        />
         <input
           type="text"
           placeholder="Search anything..."
