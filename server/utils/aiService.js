@@ -8,38 +8,38 @@ const summarizeText = async (text) => {
         messages: [
             {
                 role: 'system',
-                content: `You are an expert academic study assistant. Analyze the notes deeply and return ONLY a JSON object with no markdown, no explanation, just raw JSON.
+                content: `You are an expert academic study assistant. Return ONLY a JSON object, no markdown.
 
 Return exactly this structure:
 {
-  "overview": "A rich, detailed 4-5 sentence paragraph explaining the main topic, its importance, and real world application",
-  "keyPoints": [
-    "Point 1 — explain it fully in one clear sentence",
-    "Point 2 — explain it fully in one clear sentence",
-    "Point 3 — explain it fully in one clear sentence",
-    "Point 4 — explain it fully in one clear sentence",
-    "Point 5 — explain it fully in one clear sentence"
-  ],
-  "concepts": [
-    "Concept 1 — brief definition",
-    "Concept 2 — brief definition",
-    "Concept 3 — brief definition"
-  ],
-  "studyTip": "One specific, actionable study tip tailored to this exact topic",
-  "difficulty": "easy or medium or hard",
-  "estimatedReadTime": "X minutes"
+  "overview": "3-4 sentence paragraph about the topic",
+  "keyPoints": ["Point 1", "Point 2", "Point 3", "Point 4", "Point 5"],
+  "concepts": ["Concept 1", "Concept 2", "Concept 3"],
+  "studyTip": "One specific study tip",
+  "difficulty": "easy or medium or hard"
 }`
             },
             {
                 role: 'user',
-                content: `Analyze and summarize these study notes thoroughly:\n\n${text}`
+                content: `Summarize these study notes:\n\n${text.slice(0, 2000)}`
             }
         ],
-        max_tokens: 2000,
-        temperature: 0.7
+        max_tokens: 1200,
+        temperature: 0.5
     })
-    const clean = response.choices[0].message.content.replace(/```json|```/g, '').trim()
-    return JSON.parse(clean)
+
+    try {
+        const clean = response.choices[0].message.content.replace(/```json|```/g, '').trim()
+        return JSON.parse(clean)
+    } catch (e) {
+        return {
+            overview: response.choices[0].message.content,
+            keyPoints: [],
+            concepts: [],
+            studyTip: '',
+            difficulty: 'medium'
+        }
+    }
 }
 
 const askQuestion = async (text, question) => {
@@ -51,20 +51,19 @@ const askQuestion = async (text, question) => {
                 content: `You are an expert tutor helping a student understand their study material.
 
 When answering:
-- Start with a direct, clear answer to the question
-- Then explain the concept in depth with examples
-- Break down complex ideas into simple language
-- Use bullet points or numbered steps where helpful
-- End with a real world example or application
-- Be thorough — students need complete understanding, not short answers
-- If the question is not covered in the notes, say so clearly`
+- Start with a direct clear answer
+- Explain the concept in depth with examples
+- Use simple language
+- Use bullet points where helpful
+- End with a real world example
+- Be thorough and complete`
             },
             {
                 role: 'user',
-                content: `Here are my study notes:\n\n${text}\n\nMy question: ${question}\n\nPlease give me a thorough, well structured answer.`
+                content: `Study notes:\n\n${text.slice(0, 2000)}\n\nQuestion: ${question}`
             }
         ],
-        max_tokens: 2000,
+        max_tokens: 1000,
         temperature: 0.7
     })
     return response.choices[0].message.content
@@ -72,9 +71,9 @@ When answering:
 
 const generateQuiz = async (text, count, difficulty) => {
     const difficultyGuide = {
-        easy: 'basic recall and definition questions that test fundamental understanding',
-        medium: 'application questions that require understanding concepts and how they work together',
-        hard: 'complex analysis and evaluation questions that require critical thinking and deep understanding'
+        easy: 'basic recall and definition questions',
+        medium: 'application questions requiring concept understanding',
+        hard: 'complex analysis requiring critical thinking'
     }
 
     const response = await groq.chat.completions.create({
@@ -82,21 +81,20 @@ const generateQuiz = async (text, count, difficulty) => {
         messages: [
             {
                 role: 'system',
-                content: `You are an expert quiz creator for academic study. Generate exactly ${count} questions.
-
-Difficulty: ${difficulty} — ${difficultyGuide[difficulty]}
+                content: `You are an expert quiz creator. Generate exactly ${count} ${difficulty} questions.
+Difficulty: ${difficultyGuide[difficulty]}
 
 Rules:
-- Every question must test real understanding not just memorization
-- Wrong options must be plausible and related to the topic
-- Each question must have exactly 4 options labeled A B C D
-- Include a clear explanation for the correct answer
-- Return ONLY a JSON array, no markdown, no extra text
+- Test real understanding not memorization
+- Wrong options must be plausible
+- Exactly 4 options per question labeled A B C D
+- Include explanation for correct answer
+- Return ONLY a JSON array, no markdown
 
 Format:
 [
   {
-    "question": "Clear, specific question?",
+    "question": "Question here?",
     "options": ["A. option1", "B. option2", "C. option3", "D. option4"],
     "answer": "A",
     "explanation": "This is correct because..."
@@ -105,10 +103,10 @@ Format:
             },
             {
                 role: 'user',
-                content: `Generate ${count} ${difficulty} difficulty questions from these notes:\n\n${text}`
+                content: `Generate ${count} ${difficulty} questions from:\n\n${text.slice(0, 2000)}`
             }
         ],
-        max_tokens: 3000,
+        max_tokens: 1500,
         temperature: 0.7
     })
     const clean = response.choices[0].message.content.replace(/```json|```/g, '').trim()
@@ -121,30 +119,29 @@ const generateFlashcards = async (text) => {
         messages: [
             {
                 role: 'system',
-                content: `You are a flashcard generator for academic study. Create clear, effective study flashcards.
+                content: `You are a flashcard generator for academic study.
 
 Rules:
-- Front should be a clear question or concept
-- Back should be a complete, accurate answer or explanation
-- Cover the most important concepts from the notes
-- Keep fronts concise, backs can be detailed
-- Generate between 10-15 flashcards
+- Front: clear question or concept
+- Back: complete accurate answer
+- Cover most important concepts
+- Generate 10 flashcards
 - Return ONLY a JSON array, no markdown
 
 Format:
 [
   {
     "front": "What is X?",
-    "back": "X is... — detailed explanation here"
+    "back": "X is... detailed explanation"
   }
 ]`
             },
             {
                 role: 'user',
-                content: `Generate comprehensive flashcards from these study notes:\n\n${text}`
+                content: `Generate flashcards from:\n\n${text.slice(0, 2000)}`
             }
         ],
-        max_tokens: 2000,
+        max_tokens: 1000,
         temperature: 0.7
     })
     const clean = response.choices[0].message.content.replace(/```json|```/g, '').trim()
