@@ -1,5 +1,5 @@
 const Note = require('../models/Note')
-const upload = require('../utils/upload')
+const { upload } = require('../utils/upload')
 const pdf = require('pdf-parse')
 const fs = require('fs')
 
