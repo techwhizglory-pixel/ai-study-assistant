@@ -18,6 +18,15 @@ const fileFilter = (req, file, cb) => {
     }
 }
 
-const upload = multer({ storage, fileFilter })
+const imageFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+        cb(null, true)
+    } else {
+        cb(new Error('Only image files allowed'), false)
+    }
+}
 
-module.exports = upload
+const upload = multer({ storage, fileFilter })
+const uploadImage = multer({ storage, fileFilter: imageFilter })
+
+module.exports = { upload, uploadImage }
