@@ -177,5 +177,81 @@ const getDashboard = async (req, res) => {
         res.status(500).json({ success: false, message: error.message })
     }
 }
+const getPlanner = async (req, res) => {
+    try {
+        const userId = req.user._id
 
-module.exports = { getOverview, getActivity, getHeatmap, getStreak, getQuizAnalytics, getDashboard }
+        const [notes, summaries, flashcards, quizzes] = await Promise.all([
+            Note.find({ userId }),
+            Summary.find({ userId }).populate('noteId', 'title'),
+            Flashcard.find({ userId }).populate('noteId', 'title'),
+            Quiz.find({ userId, score: { $ne: null } }).populate('noteId', 'title')
+        ])
+
+        const tasks = []
+
+        if (notes.length === 0) {
+            tasks.push({
+                title: 'Upload your first note',
+                duration: '5 mins',
+                priority: 'High',
+                action: '/upload'
+            })
+        }
+
+        notes.forEach((note) => {
+            const summaryExists = summaries.some(
+                (summary) => summary.noteId?._id.toString() === note._id.toString()
+            )
+            if (!summaryExists) {
+                tasks.push({
+                    title: `Generate summary for ${note.title}`,
+                    duration: '2 mins',
+                    priority: 'High',
+                    action: `/summary/${note._id}`
+                })
+            }
+        })
+
+        summaries.forEach((summary) => {
+            const flashcardExists = flashcards.some(
+                (flashcard) => flashcard.noteId?._id.toString() === summary.noteId?._id.toString()
+            )
+            if (!flashcardExists) {
+                tasks.push({
+                    title: `Create flashcards for ${summary.noteId?.title}`,
+                    duration: '3 mins',
+                    priority: 'Medium',
+                    action: `/flashcards/${summary.noteId?._id}`
+                })
+            }
+        })
+
+        quizzes.forEach((quiz) => {
+            const score = (quiz.score / quiz.questions.length) * 100
+            if (score < 70) {
+                tasks.push({
+                    title: `Review ${quiz.noteId?.title}`,
+                    duration: '20 mins',
+                    priority: 'High',
+                    action: `/quiz/${quiz._id}`
+                })
+            }
+        })
+
+        if (tasks.length === 0) {
+            tasks.push({
+                title: 'Take a revision quiz',
+                duration: '15 mins',
+                priority: 'Low',
+                action: '/dashboard'
+            })
+        }
+
+        res.status(200).json({ success: true, data: tasks.slice(0, 5) })
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message })
+    }
+}
+
+module.exports = { getOverview, getActivity, getHeatmap, getStreak, getQuizAnalytics, getDashboard, getPlanner }
