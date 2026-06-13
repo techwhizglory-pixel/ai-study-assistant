@@ -234,7 +234,7 @@ const getPlanner = async (req, res) => {
                     title: `Review ${quiz.noteId?.title}`,
                     duration: '20 mins',
                     priority: 'High',
-                    action: `/quiz/${quiz._id}`
+                      action: `/quiz/${quiz.noteId?._id}`
                 })
             }
         })
