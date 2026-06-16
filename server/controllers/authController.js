@@ -72,15 +72,14 @@ const uploadAvatar = async (req, res) => {
         }
 
         const user = await User.findByIdAndUpdate(
-    req.user._id,
-    { avatar: req.file.path },
-    { returnDocument: 'after' }
-).select('-password')
+            req.user._id,
+            { avatar: req.file.path },
+            { new: true }
+        ).select('-password')
 
         res.status(200).json({ success: true, user })
     } catch (error) {
         res.status(500).json({ success: false, message: error.message })
     }
 }
-
 module.exports = { registerUser, loginUser, getMe, uploadAvatar }
